@@ -1,0 +1,2 @@
+* Preface
+  storage the config file in my Arch Linux
