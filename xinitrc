@@ -31,7 +31,8 @@ amixer set Speaker unmute
 xbacklight set 70
 # for dunst
 dunst &
-
+# lock
+xscreensaver &
 # dwm
 if [[ -f "~/dwm.log" ]]
 then
