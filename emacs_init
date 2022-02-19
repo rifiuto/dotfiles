@@ -1,0 +1,405 @@
+
+;; -*- lexical-binding: t -*-
+;; Minimize garbage collection during startup
+(setq gc-cons-threshold most-positive-fixnum)
+(add-hook 'emacs-startup-hook
+		  (lambda ()
+		    (setq gc-cons-threshold (expt 2 23))))
+;; make the mouse better
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
+(setq mouse-wheel-progressive-speed nil)
+;; alias
+(defalias 'yes-or-no-p 'y-or-n-p)
+;; add the archives
+(require 'package)
+(package-initialize)
+(setq package-archives '(("gnu" . "http://elpa.zilongshanren.com/gnu/")
+                         ("melpa" . "http://elpa.zilongshanren.com/melpa/")))
+;; for kill process without query
+(setq confirm-kill-processes nil)
+;; confirm install the package 'use-package
+(unless package-archive-contents
+  (package-refresh-contents))
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+;; ensure all the package install automatically.
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
+;; prohabit the bell and the screen blink
+(setq ring-bell-function #'ignore)
+;; inhibit the startup-screen
+(setq inhibit-startup-screen t)
+;; if you modify the configuratio
+;; in the directory 'elpa, it can load automatically.
+(setq load-prefer-newer t)
+;; show the current line
+;; (global-hl-line-mode)
+(global-set-key (kbd "<f9>") 'whitespace-mode)
+(global-set-key (kbd "<f7>") 'hl-line-mode)
+;; globel linum mode
+;; about the frame
+(if (display-graphic-p)
+    (setq initial-frame-alist
+          '((tool-bar-lines . 0)
+            (fullscreen . maximized)))
+  (setq initial-frame-alist '((tool-bar-lines . 0))))
+(setq default-frame-alist
+      '((tool-bar-lines . 0)
+        (fullscreen . maximized)))
+;; basic mode
+(progn
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (blink-cursor-mode -1)
+  (require 'recentf)
+  (recentf-mode 1)
+  (setq recentf-max-menu-item 10)
+  ;; choose and input something to delete
+  (delete-selection-mode 1)
+  ;; highlight the paren
+  (show-paren-mode)
+  ;; Delete parentheses in pairs
+  (electric-pair-mode 1)
+  ;; show the column number
+  (column-number-mode)
+  ;; (setq display-time-24hr-format t)
+  ;; (setq display-time-day-and-date t)
+  ;; (display-time-mode)
+  (setq tab-always-indent 'complete)
+  (setq-default cursor-type '(bar . 3))
+  )
+;; fast to fine init.el
+(defun open-init-file()
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+(global-set-key (kbd "<f2>") 'open-init-file)
+
+;; long time
+(defun open-blog-dir()
+  (interactive)
+  (dired "~/Blog/source/_posts"))
+(global-set-key (kbd "<f3>") 'open-blog-dir)
+;; for a short time
+(defun open-mcm()
+  (interactive)
+  (dired "~/mcm"))
+(global-set-key (kbd "<f4>") 'open-mcm)
+(use-package company
+  :bind (:map company-active-map
+			  ("M-n" . nil)
+			  ("M-p" . nil)
+			  ("C-n" . #'company-select-next)
+			  ("C-p" . #'company-select-previous))
+  :hook (prog-mode . company-mode)
+  :config
+  (setq company-show-numbers t
+		company-idle-delay 0
+		company-echo-delay 0
+		company-minimum-prefix-length 1
+		company-tooltip-align-annotations t
+		company-backends (delete 'company-semantic company-backends)))
+
+(use-package counsel
+  :after swiper)
+(use-package swiper
+  :init (ivy-mode)
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  ;; enable this if you want `swiper' to use it
+  ;; (setq search-default-mode #'char-fold-to-regexp)
+  (global-set-key "\C-s" 'swiper)
+  (global-set-key (kbd "C-c C-r") 'ivy-resume)
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+  (global-set-key (kbd "C-h C-f") 'counsel-describe-function)
+  (global-set-key (kbd "C-h C-v") 'counsel-describe-variable)
+  (global-set-key (kbd "C-c g") 'counsel-git)
+  (global-set-key (kbd "C-c j") 'counsel-git-grep)
+  (global-set-key (kbd "C-c k") 'counsel-ag)
+  (global-set-key (kbd "C-x l") 'counsel-locate)
+  (global-set-key (kbd "C-x b") 'ivy-switch-buffer)
+  (global-set-key (kbd "C-c v") 'ivy-push-view)
+  (global-set-key (kbd "C-c V") 'ivy-pop-view)
+  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
+
+;; (use-package ivy-posframe
+;;   :init
+;;   (ivy-posframe-mode 1)
+;;   :config
+;;   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+;;   (setq ivy-posframe-height-alist '((swiper . 10)
+;; 									(t      . 20))))
+
+;; ;;
+(customize-set-variable 'outline-minor-mode-prefix [(control o)])
+
+;; ;; backup and file related
+(setq make-backup-files nil)
+(setq auto-save-default t)
+(setq-default indent-tabs-mode t)
+;; 4 is more popular than 8.
+(setq-default tab-width 4)
+;; UTF-8 as default encoding
+(set-language-environment "UTF-8")
+(set-default-coding-systems 'utf-8-unix)
+
+
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(use-package magit
+  :defer t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;; load theme ;;;;;;;;;;;;;;;;;
+(use-package doom-themes)
+(use-package circadian
+  :config
+  (setq calendar-latitude 22.2
+		calendar-longitude 114.2
+		circadian-themes '((:sunrise . tango-dark)
+                           (:sunset  . doom-fairy-floss)))
+  (circadian-setup))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package all-the-icons
+  :if (display-graphic-p))
+;; ;;;
+(use-package neotree
+  :bind
+  ("<f8>" . neotree-toggle)
+  :custom
+  (neo-window-width 20)
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+
+
+
+(use-package rainbow-delimiters
+  :hook
+  (emacs-lisp-mode . rainbow-delimiters-mode)
+  (prog-mode . rainbow-delimiters-mode)
+  (LaTeX-mode . rainbow-delimiters-mode)
+  :custom-face
+  (rainbow-delimiters-depth-1-face ((t (:foreground "#00ffcc"))))
+  (rainbow-delimiters-depth-2-face ((t (:foreground "#e67300"))))
+  (rainbow-delimiters-depth-3-face ((t (:foreground "#1ac6ff"))))
+  (rainbow-delimiters-depth-4-face ((t (:foreground "#ff1ab2"))))
+  (rainbow-delimiters-depth-5-face ((t (:foreground "orange"))))
+  )
+
+
+;; Setting English Font
+(cond ((display-graphic-p)
+	   (set-face-attribute
+		'default nil :font "Fira Code 10")
+	   ;; Chinese Font
+	   (dolist (charset '(kana han symbol cjk-misc bopomofo))
+		 (set-fontset-font (frame-parameter nil 'font)
+						   charset
+						   (font-spec :family "Sarasa Mono SC")))))
+
+;; (use-package multiple-cursors
+;;   :bind
+;;   ("C-S-c C-S-c" . mc/edit-lines)
+;;   ("C->" . mc/mark-next-like-this)
+;;   ("C-<" . mc/mark-previous-like-this)
+;;   ("C-c C-<" . mc/mark-all-like-this))
+
+
+
+
+
+
+(set-frame-parameter (selected-frame) 'alpha '(90 . 90))
+(add-to-list 'default-frame-alist '(alpha . (95 . 90)))
+(defun toggle-transparency ()
+  (interactive)
+  (let ((alpha (frame-parameter nil 'alpha)))
+    (set-frame-parameter
+     nil 'alpha
+     (if (eql (cond ((numberp alpha) alpha)
+                    ((numberp (cdr alpha)) (cdr alpha))
+                    ;; Also handle undocumented (<active> <inactive>) form.
+                    ((numberp (cadr alpha)) (cadr alpha)))
+              100)
+         '(80 . 60) '(100 . 100)))))
+(global-set-key (kbd "C-c t") 'toggle-transparency)
+
+
+
+;; (use-package hide-mode-line
+;;   :config
+;;   (add-hook 'pdf-continuous-scroll-mode-hook #'hide-mode-line-mode)
+;;   ;; (add-hook 'emacs-lisp-mode-hook #'hide-mode-line-mode)
+;;   ;; (add-hook 'sh-mode-hook 'hide-mode-line-mode)
+;;   ;; (add-hook 'neotree-mode-hook #'hide-mode-line-mode)
+;;   ;; (add-hook 'LaTeX-mode-hook #'hide-mode-line-mode)
+;;   )
+
+
+(use-package lsp-mode
+  :defer 5
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (sh-mode . lsp)
+		 (c-mode . lsp))
+  :commands lsp
+  :config
+  (setq lsp-headerline-breadcrumb-enable nil))
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;; if you are ivy user
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+
+
+
+
+(use-package lispy
+  :hook (emacs-lisp-mode . lispy-mode)
+  (emacs-lisp-mode . linum-mode))
+
+
+(defun switch-to-minibuffer ()
+  "Switch to minibuffer window."
+  (interactive)
+  (if (active-minibuffer-window)
+      (select-window (active-minibuffer-window))
+    (error "Minibuffer is not active")))
+(global-set-key (kbd "C-c o") 'switch-to-minibuffer) ;; Bind to `C-c o'
+;; ==================================================
+;; ======================LaTeX=======================
+(use-package highlight-parentheses
+  :hook (LaTeX-mode. highlight-parentheses-mode))
+(use-package tex
+  :init
+  (add-to-list 'auto-mode-alist '("\\.tex$" . LaTeX-mode))
+  :custom
+  (TeX-region "fragment")
+  (TeX-master nil)
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-show-compilation nil)
+  (TeX-clean-confirm nil)
+  (TeX-save-query nil)
+  (LaTeX-item-indent 4)
+  (LaTeX-indent-level 0)
+  ;; speed up the start emacs when you open the tex file.
+  (pdf-view-use-unicode-ligther nil)
+  (pdf-view-use-scaling t)
+  (pdf-view-use-imagemagick nil)
+  :ensure auctex
+  :config
+  (with-eval-after-load
+	  'latex (define-key LaTeX-mode-map (kbd "C-c C-g") #'pdf-sync-forward-search))
+  (add-hook 'LaTeX-mode-hook
+            (lambda ()
+              (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex -shell-escape --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
+              (add-to-list 'TeX-command-list '("PdfLaTeX" "%`pdflatex -shell-escape --synctex=1 -8bit%(mode)%' %t" TeX-run-TeX nil t))
+              (setq TeX-command-default "PdfLaTeX")
+			  (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
+			  (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
+			  ;; (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
+			  (local-set-key (kbd "<f5>") 'TeX-clean)
+			  (local-set-key (kbd "<f6>") 'TeX-documentation-texdoc)
+			  (local-set-key (kbd "C-S-a") 'LaTeX-find-matching-begin)
+			  (local-set-key (kbd "C-S-e") 'LaTeX-find-matching-end)
+			  (turn-off-auto-fill)
+              (outline-minor-mode)
+              (menu-bar-mode)
+			  (linum-mode)
+              (visual-line-mode)
+			  (setq autopair-handle-action-fns
+					(list 'autopair-default-handle-action
+						  '(lambda (action pair pos-before)
+							 (hl-paren-color-update))))
+			  (TeX-fold-mode)
+			  (LaTeX-math-mode)
+			  )))
+(use-package latex-preview-pane
+  :after tex
+  :custom
+  (shell-escape-mode "-shell-escape")
+  (pdf-latex-command "pdflatex")
+  :config
+  (defun toggle-preview-mode ()
+	"Use for preview latex."
+	(interactive)
+	(if (bound-and-true-p latex-preview-pane-mode)
+		(latex-preview-pane-mode 0)
+	  (latex-preview-pane-mode 1)))
+  (local-set-key (kbd "<f10>") 'toggle-preview-mode))
+;; (use-package auto-complete-auctex)
+(use-package cdlatex
+  :after tex
+  :init
+  (add-hook 'LaTeX-mode-hook 'turn-on-cdlatex) ; with AUCTeX LaTeX mode
+  (add-hook 'latex-mode-hook 'turn-on-cdlatex) ; with Emacs latex mode
+  :custom
+  (cdlatex-paired-parens "$[{(")
+  (TeX-electric-sub-and-superscript t)
+  :config
+  (defun my-after-load-cdlatex ()
+    (define-key cdlatex-mode-map "_" nil) t)
+  (eval-after-load "cdlatex" '(my-after-load-cdlatex))
+  (setq cdlatex-env-alist
+		'(("pmatrix" "\\begin{equation}\n\t\\begin{pmatrix}\n\t ? &  &  &  &  \\\\\n\t  &  &  &  &  \n\t\\end{pmatrix}\n\\end{equation}\n" nil)))
+  (setq cdlatex-command-alist
+		'(("ma" "Insert pmatrix env"   "" cdlatex-environment ("pmatrix") t nil)))
+  )
+;; use for no upgrading when start emacs
+
+(use-package pdf-tools
+  :requires pdf-continuous-scroll-mode
+  :magic ("%PDF" . pdf-view-mode)
+  :config
+  (pdf-tools-install :no-query)
+  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+  (setq pdf-view-use-scaling t
+		pdf-view-use-imagemagick nil))
+
+(use-package dashboard
+  :if (display-graphic-p)
+  :init
+  (dashboard-setup-startup-hook)
+  :config
+  (setq dashboard-banner-logo-title "Happy Hacking"
+		dashboard-show-shortcuts nil
+		dashboard-center-content t
+		dashboard-set-heading-icons t
+		dashboard-set-file-icons t
+		dashboard-page-separator "\n\f\n")
+  (setq dashboard-items '((recents  . 10)
+                          (bookmarks . 5)
+                          (registers . 5))))
+
+
+(use-package page-break-lines
+  :hook (dashboard-mode-hook . page-break-lines-mode))
+
+(use-package aggressive-indent
+  :config
+  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+  (add-hook 'latex-mode-hook #'aggressive-indent-mode))
+
+(use-package vterm)
+(use-package epc      :defer t :after eaf)
+(use-package ctable   :defer t :after eaf)
+(use-package deferred :defer t :after eaf)
+(use-package s        :defer t :after eaf)
+;; for emacsclient when in terminal
+(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
+(require 'eaf)
+(require 'eaf-pdf-viewer)
+(setq eaf-pdf-dark-mode nil)
+(require 'eaf-demo)
+
+(add-hook 'sh-mode-hook 'linum-mode)
