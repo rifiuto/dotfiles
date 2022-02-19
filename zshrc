@@ -137,7 +137,7 @@ mcd(){
 	cd "$1"
 }
 bindkey -e
-. ~/normal
+. ~/dotfile/normal
 
 vterm_printf(){
     if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
@@ -150,7 +150,6 @@ vterm_printf(){
         printf "\e]%s\e\\" "$1"
     fi
 }
-
 
 
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
