@@ -10,7 +10,7 @@ numlockx &
 # about the wallpaper
 while habak -ms -hi ~/Pictures/wallpaper
 do
-sleep 600   #让habak每隔10分钟随机切换一张屏幕壁纸
+sleep 60   #让habak每隔10分钟随机切换一张屏幕壁纸
 done &
 # for pycharm
 export _JAVA_AWT_WM_NONREPARENTING=1

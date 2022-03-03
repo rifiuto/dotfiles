@@ -3,7 +3,7 @@
 export TERM="xterm-256color"
 # Path to your oh-my-zsh installation.
 ZSH=/usr/share/oh-my-zsh/
-
+export NO_AT_BRIDGE=1
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -70,7 +70,7 @@ ZSH_THEME="guezwhoz"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git z sudo zsh-autosuggestions zsh-syntax-highlighting fzf-tab fzf)
+plugins=(z sudo zsh-autosuggestions zsh-syntax-highlighting fzf-tab fzf)
 
 
 # User configuration
@@ -103,7 +103,7 @@ ZSH_CACHE_DIR=$HOME/.cache/oh-my-zsh
 if [[ ! -d $ZSH_CACHE_DIR ]]; then
   mkdir $ZSH_CACHE_DIR
 fi
-source $ZSH/oh-my-zsh.sh
+bash ~/bin/install.sh 
 # source /usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme
 
 # >>> conda initialize >>>

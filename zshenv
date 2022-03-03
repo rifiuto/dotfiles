@@ -5,6 +5,7 @@ path=(# "/home/sayno/anaconda3/bin"
       "/home/sayno/.local/bin"
       "/usr/local/texlive/2021/texmf-dist/doc/man"
       "/usr/local/texlive/2021/texmf-dist/doc/info"
+	  "./local/bin"
 	  # for JetBrains
 	  # "/home/sayno/Downloads/JetBrains/pycharm-2021.3.1/bin"
 	  # "/home/sayno/Downloads/JetBrains/dataspell-2021.3.1/bin"
